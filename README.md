@@ -1,6 +1,6 @@
 # Cost-Aware Independent Session Orchestrator
 
-Version 1.1.2 · Claude Code adapter · CC0-1.0
+Version 1.2.0 · safe-default Claude Code adapter · CC0-1.0
 
 This package installs a reusable Claude Code workflow in which one capable lead session plans and supervises several economical, independent teammate sessions. The lead monitors their progress, handles exceptions, escalates only difficult branches, and waits for every required assignment before delivering the combined result.
 
@@ -8,8 +8,8 @@ This package installs a reusable Claude Code workflow in which one capable lead 
 
 | File | Audience | Purpose |
 |---|---|---|
-| `portable-session-orchestrator-installer.v1.1.json` | Receiving assistant | Machine-readable `INSTALL`, `VERIFY`, and `UNINSTALL` contract |
-| `portable-session-orchestrator-installer.v1.1.annotated.md` | Humans | Detailed explanation of the mechanic, resource policy, safeguards, and host adapter |
+| `portable-session-orchestrator-installer.v1.2.json` | Receiving assistant | Machine-readable `INSTALL`, `VERIFY`, and `UNINSTALL` contract |
+| `portable-session-orchestrator-installer.v1.2.annotated.md` | Humans | Detailed explanation of the mechanic, resource policy, safeguards, and host adapter |
 | `README.md` | Humans | This quick-start and installation overview |
 
 ## What INSTALL changes
@@ -18,69 +18,53 @@ Here, `~` means the recipient's home directory—for example, `C:\Users\Name` on
 
 | Action | Destination | Purpose |
 |---|---|---|
-| Merge one setting | `~/.claude/settings.json` | Enable experimental agent teams while preserving unrelated settings |
-| Create | `~/.claude/skills/coordinated-session-orchestration/SKILL.md` | Lead-session orchestration policy |
-| Create | `~/.claude/agents/economy-light-worker.md` | Economical read-only teammate role |
-| Create | `~/.claude/agents/economy-standard-worker.md` | Economical general teammate role |
-| Create | `~/.claude/agents/economy-deep-worker.md` | High-effort, bounded teammate role |
-| Create last | `~/.claude/skills/coordinated-session-orchestration/INSTALL-RECEIPT.json` | Hashes, backups, prior settings, and uninstall evidence |
+| Create | `~/.claude/skills/cost-aware-independent-session-orchestrator/SKILL.md` | Manual-only orchestration skill |
+| Create last | `~/.claude/skills/cost-aware-independent-session-orchestrator/INSTALL-RECEIPT.json` | Exact ownership, backup, collision, and hash evidence |
 
-The settings merge adds:
+That is the complete persistent footprint. The installer does **not** read or modify `settings.json`; install worker definitions; touch memories, hooks, workflows, teams, tasks, or other skills; or create a plugin, executable, daemon, model, scheduled job, or background service.
 
-```json
-{
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  }
-}
-```
-
-The installer does **not** install a plugin, executable, daemon, model, scheduled job, or continuously running service. It does not change the lead's current model or effort, and it does not create or run a team during installation.
+The installed skill includes `disable-model-invocation: true`, so Claude cannot load it automatically. The user must invoke `/cost-aware-independent-session-orchestrator` explicitly.
 
 ## Requirements
 
 - Claude Code 2.1.178 or newer.
 - An account and provider configuration that can use the selected model aliases.
-- Permission to modify the recipient's user-level `~/.claude` configuration.
+- Permission to create the one declared user-level skill directory.
 - A receiving assistant capable of reading this JSON manifest and performing its declared file operations.
 
-Agent teams are experimental and disabled by default. The installer enables the documented feature flag but does not claim that static installation proves live behavior.
-
-On current Claude Code versions, enabling that flag also changes ordinary delegation: a named delegation can launch as a teammate even when the user did not explicitly ask for a team. The installed skill supplies a consent gate, but the underlying feature flag is broader than this package. Disable or uninstall the flag if that host behavior is not acceptable.
+Agent teams are experimental and disabled by default. This installer deliberately leaves them disabled. For a live run, launch a dedicated interactive session with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` set only for that process or temporary shell. While enabled, named delegation can launch teammates even without an explicit team request, so use that session only for deliberate orchestrated work.
 
 ## Install
 
 Keep all three package files together, open Claude Code where it can read them, and enter:
 
 ```text
-@portable-session-orchestrator-installer.v1.1.json INSTALL
+@portable-session-orchestrator-installer.v1.2.json INSTALL
 ```
 
-Before mutation, the receiving assistant must show the resolved destinations, intended settings merge, backups, compatibility warnings, and collisions. If an existing destination differs, it must preserve the file and request a fresh decision rather than overwrite it.
+Before mutation, the receiving assistant must resolve every destination and finish the exact-path and same-name collision checks. If anything differs, it stops before creating a directory, backup, temporary file, or receipt; preserves the existing content; shows only the relevant conflict; and requests a fresh decision.
 
-If the existing settings file is invalid JSON, or if its top-level `env` member exists but is not a JSON object, installation stops without coercing or overwriting that content.
-
-The installer writes timestamped backups for changed existing files, writes the receipt last, and then performs static verification.
+The installer does not read `settings.json` or unrelated skill bodies. It writes the skill atomically, writes the receipt last, and then performs static verification.
 
 ## Verify
 
 Run a read-only integrity check with:
 
 ```text
-@portable-session-orchestrator-installer.v1.1.json VERIFY
+@portable-session-orchestrator-installer.v1.2.json VERIFY
 ```
 
-Verification checks settings, declared file contents, frontmatter, receipt data, and SHA-256 hashes. It does not launch teammates or consume resources for a live team test.
+Verification checks only the manifest, declared skill, manual-invocation frontmatter, receipt, and SHA-256 hash. It does not read settings, agents, memories, workflows, hooks, teams, tasks, or unrelated skill bodies. It does not launch teammates.
 
 ## Uninstall
 
 Run evidence-based removal with:
 
 ```text
-@portable-session-orchestrator-installer.v1.1.json UNINSTALL
+@portable-session-orchestrator-installer.v1.2.json UNINSTALL
 ```
 
-Uninstallation removes a file only when its current hash matches the installation receipt. User-modified files are preserved. The settings flag is removed or restored only when the receipt proves what the installer changed. The receipt is removed after a fully successful uninstall, but retained when unresolved or modified content remains.
+Uninstallation operates only on the declared skill file, receipt, and skill directory. It removes or restores the skill only when the current and backup hashes prove the operation is safe. Modified or ambiguous files are preserved, and the receipt remains until every owned operation succeeds. Settings and all other user content are outside uninstall scope.
 
 ## Runtime model policy
 
@@ -97,9 +81,9 @@ One failed branch can receive one focused correction and one replacement or prof
 
 ## Independent sessions, not ordinary subagent calls
 
-Claude Code stores reusable teammate-role definitions beneath `~/.claude/agents`, which can make the naming confusing. When those definitions are used to create agent-team teammates, the workers are full independent Claude Code sessions with separate context windows, automatic messages, and shared task state.
+The skill instructs the lead to create named agent-team teammates with an explicit economical model in each spawn request. Those workers are full independent Claude Code sessions with separate context windows, automatic messages, and shared task state.
 
-The host currently documents that teammate definitions control the worker model, tool allowlist, and added instructions. It also says teammates inherit the lead's effort and does not list `maxTurns` as a teammate-definition control. The role files retain `effort` and `maxTurns` for ordinary subagent use, but in agent-team mode this package treats turn counts only as lead-supervised budgets and does not claim per-teammate effort differentiation.
+No files are installed beneath `~/.claude/agents`. Light, standard, and deep are routing labels embedded in the manual skill, not globally discoverable agent definitions. Claude Code says teammates inherit the lead's effort and does not expose `maxTurns` as a teammate control, so turn limits are lead-supervised budgets rather than host-enforced limits.
 
 The main automatic economic lever is therefore heterogeneous model routing, not heterogeneous reasoning effort. If lower effort per independent worker is essential, use separately launched sessions or manually change the viewed teammate's effort where the host supports it.
 
@@ -134,21 +118,21 @@ The lead does not deliver the orchestrated answer until every required assignmen
 
 ## Further detail
 
-Read `portable-session-orchestrator-installer.v1.1.annotated.md` for the complete state model, eligibility gate, assignment contract, monitoring loop, completion barrier, safety rules, adapter limitations, and portability guidance.
+Read `portable-session-orchestrator-installer.v1.2.annotated.md` for the complete state model, eligibility gate, assignment contract, monitoring loop, completion barrier, safety rules, adapter limitations, and portability guidance.
 
 Official references:
 
 - [Agent teams](https://code.claude.com/docs/en/agent-teams)
+- [Skills](https://code.claude.com/docs/en/skills)
 - [Model configuration](https://code.claude.com/docs/en/model-config)
 - [Cost management](https://code.claude.com/docs/en/costs)
 - [Custom agent definitions](https://code.claude.com/docs/en/subagents)
-- [Settings](https://code.claude.com/docs/en/settings)
 
 ## Integrity
 
 SHA-256 checksums for the two versioned payload files:
 
 ```text
-D091998DD80EA7AD04B241ED77A5E129C9D87187984DEED69058D39683A01769  portable-session-orchestrator-installer.v1.1.json
-7F498AF01148A79BFDA5D78C6CAB8C623FA57FC5C277D75457E9739C723C7044  portable-session-orchestrator-installer.v1.1.annotated.md
+B655D66AE2CC26A3ED99EC5410EE6863009A8B72D9F0E9C05893D0792D5CE54E  portable-session-orchestrator-installer.v1.2.json
+B395F7250C098C96424843DD61C61EA32EAB7DD944DB33247FACAC1A20269D88  portable-session-orchestrator-installer.v1.2.annotated.md
 ```
