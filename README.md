@@ -1,4 +1,4 @@
-# Cost-Aware Independent Session Orchestrator
+# Cost-Aware Independent Session Orchestrator (also called Multi-Agent Orchestrator)
 
 Version 1.2.0 · safe-default Claude Code adapter · CC0-1.0
 
