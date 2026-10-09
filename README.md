@@ -1,9 +1,19 @@
-# Cost-Aware Independent Session Orchestrator
-# (also called Multi-Agent Orchestrator)
+# The Multi-Agent Orchestrator — Claude Code
 
 Version 1.2.0 · safe-default Claude Code adapter · CC0-1.0
 
 This package installs a reusable Claude Code workflow in which one capable lead session plans and supervises several economical, independent teammate sessions. The lead monitors their progress, handles exceptions, escalates only difficult branches, and waits for every required assignment before delivering the combined result.
+
+## Choose your edition
+
+This repository contains the **Claude Code edition**, previously titled
+Cost-Aware Independent Session Orchestrator. Its installer, invocation name,
+version history, and CC0-1.0 license are retained.
+
+For Codex desktop with Astra/Sol leads and Sol/Luna worker chats, use the separate
+[The Multi-Agent Orchestrator — Codex](https://github.com/FixicoAI-DevLabs/multi-agent-orchestrator-codex)
+repository. Each edition has its own installation instructions and validation
+evidence; the installer in this repository is for Claude Code.
 
 ## Package contents
 
